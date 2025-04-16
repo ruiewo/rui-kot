@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "description": "KingOfTimeの勤怠管理ページで自動的に入力を行うChrome拡張機能",
   "permissions": ["scripting", "storage", "activeTab"],
-  "host_permissions": ["https://*.kingoftime.jp/*"],
+  "host_permissions": [
+    "https://*.kingoftime.jp/admin/*",
+    "https://kintaiplus.freee.co.jp/admin/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },

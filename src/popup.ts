@@ -12,3 +12,21 @@ document.getElementById("start-button")?.addEventListener("click", () => {
 document.getElementById("stop-button")?.addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "stop" });
 });
+
+const updateWeekdays = (weekdays: string[]) => {
+  const weekdaysList = document.getElementById("weekdays-list");
+  if (weekdaysList) {
+    weekdaysList.innerHTML = ""; // Clear existing list
+    weekdays.forEach(day => {
+      const listItem = document.createElement("li");
+      listItem.textContent = day;
+      weekdaysList.appendChild(listItem);
+    });
+  }
+};
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "updateWeekdays") {
+    updateWeekdays(message.weekdays);
+  }
+});

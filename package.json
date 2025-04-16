@@ -1,6 +1,10 @@
 {
+  "type": "module",
   "devDependencies": {
     "@types/chrome": "^0.0.315",
     "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "build": "npx tsc && node copy-assets.js"
   }
 }
