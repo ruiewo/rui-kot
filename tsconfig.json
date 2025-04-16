@@ -1,14 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "ES6",
-    "module": "ESNext",
-    "outDir": "dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "baseUrl": "./",
-    "paths": {
-      "*": ["src/*"]
-    }
-  },
-  "include": ["src/**/*"]
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "ESNext",
+		"outDir": "dist",
+		"strict": true,
+		"esModuleInterop": true,
+		"baseUrl": "./",
+		"paths": {
+			"*": ["src/*"]
+		}
+	},
+	"include": ["src/**/*"]
 }

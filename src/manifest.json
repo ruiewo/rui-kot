@@ -1,27 +1,36 @@
 {
-  "manifest_version": 3,
-  "name": "KingOfTime 勤怠自動入力",
-  "version": "1.0.0",
-  "description": "KingOfTimeの勤怠管理ページで自動的に入力を行うChrome拡張機能",
-  "permissions": ["scripting", "storage", "activeTab"],
-  "host_permissions": [
-    "https://*.kingoftime.jp/admin/*",
-    "https://kintaiplus.freee.co.jp/admin/*"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    }
-  },
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  }
+	"manifest_version": 3,
+	"name": "KingOfTime 勤怠自動入力",
+	"version": "1.0.0",
+	"description": "KingOfTimeの勤怠管理ページで自動的に入力を行うChrome拡張機能",
+	"permissions": ["scripting", "storage", "activeTab"],
+	"host_permissions": [
+		"https://*.kingoftime.jp/admin/*",
+		"https://kintaiplus.freee.co.jp/admin/*"
+	],
+	"background": {
+		"service_worker": "background.js"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://*.kingoftime.jp/admin/*",
+				"https://kintaiplus.freee.co.jp/admin/*"
+			],
+			"js": ["content.js"]
+		}
+	],
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "icons/icon16.png",
+			"48": "icons/icon48.png",
+			"128": "icons/icon128.png"
+		}
+	},
+	"icons": {
+		"16": "icons/icon16.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	}
 }

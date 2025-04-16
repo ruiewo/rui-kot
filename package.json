@@ -1,10 +1,17 @@
 {
-  "type": "module",
-  "devDependencies": {
-    "@types/chrome": "^0.0.315",
-    "typescript": "^5.8.3"
-  },
-  "scripts": {
-    "build": "npx tsc && node copy-assets.js"
-  }
+	"type": "module",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/chrome": "^0.0.315",
+		"typescript": "^5.8.3"
+	},
+	"scripts": {
+		"build": "npx tsc && node copy-assets.js",
+		"lint": "npx @biomejs/biome lint --write .",
+		"format": "npx @biomejs/biome format --write ."
+	},
+	"engines": {
+		"node": "22.x",
+		"pnpm": "10.7.1"
+	}
 }
