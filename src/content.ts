@@ -35,11 +35,19 @@ const findTargets = () => {
     }
 
     const tr = cell.closest("tr")!;
-    const options = tr.firstElementChild?.querySelectorAll("option")!;
-    const buttonId = Array.from(options).find((option) => option.text === "打刻編集")!.value;
-    const date = tr.querySelector<HTMLTableCellElement>("td:nth-child(2)")!.innerText;
+    const startTd = tr.querySelector<HTMLTableCellElement>("td.start_end_timerecord[data-ht-sort-index='START_TIMERECORD']"); // 出勤列
+    const endTd = tr.querySelector<HTMLTableCellElement>("td.start_end_timerecord[data-ht-sort-index='END_TIMERECORD']");   // 退勤列
 
-    targets.push({ date, buttonId });
+    if (
+      startTd?.innerText.trim() === "" &&
+      endTd?.innerText.trim() === ""
+    ) {
+      const options = tr.firstElementChild?.querySelectorAll("option")!;
+      const buttonId = Array.from(options).find((option) => option.text === "打刻編集")!.value;
+      const date = tr.querySelector<HTMLTableCellElement>("td:nth-child(2)")!.innerText;
+
+      targets.push({ date, buttonId });
+    }
   }
   console.log("targets", targets);
   return targets;
