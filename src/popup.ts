@@ -19,13 +19,13 @@ document.getElementById("find-button")?.addEventListener("click", () => {
 
 		data.targets = targets;
 
-		const targetsList = document.getElementById("targets-list");
+		const targetsList = document.getElementById("target-list");
 		if (targetsList) {
 			targetsList.innerHTML = "";
 
-			for (const { date, buttonId } of targets) {
+			for (const { date } of targets) {
 				const listItem = document.createElement("li");
-				listItem.textContent = `日付: ${date}, ボタンID: ${buttonId}`;
+				listItem.textContent = date;
 				targetsList.appendChild(listItem);
 			}
 		}
@@ -35,21 +35,12 @@ document.getElementById("find-button")?.addEventListener("click", () => {
 document.getElementById("start-button")?.addEventListener("click", () => {
 	console.log("start-button clicked");
 
-	// 今日までの日付を対象とするロジック
-	const today = new Date(); // 現在の日付を動的に取得
-	const filteredTargets = data.targets.filter(({ date }) => {
-		// dateを正しくパース
-		const [month, day] = date.match(/\d+/g)!.map(Number);
-		const targetDate = new Date(today.getFullYear(), month - 1, day); // 年は現在の年を使用
-		return targetDate <= today; // 今日までの日付を対象にする
-	});
-
-	if (filteredTargets.length === 0) {
+	if (data.targets.length === 0) {
 		alert("登録可能な日付がありません。");
 		return;
 	}
 
-	execute(filteredTargets, data.timestamps);
+	execute(data.targets, data.timestamps);
 });
 
 const send = <T>(action: string, callback: (response: T) => void) => {

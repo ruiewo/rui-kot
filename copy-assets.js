@@ -22,13 +22,9 @@ function copyFolder(src, dest) {
 	}
 }
 
-// Copy manifest.json
 copyFile("src/manifest.json", "dist/manifest.json");
-
-// Copy popup.html
 copyFile("src/popup.html", "dist/popup.html");
-
-// Copy icons folder
+copyFile("src/popup.css", "dist/popup.css");
 copyFolder("src/icons", "dist/icons");
 
 console.log("Assets copied successfully!");

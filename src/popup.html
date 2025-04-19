@@ -6,21 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KingOfTime 勤怠入力</title>
   <script src="popup.js" defer></script>
+  <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
   <h1>KingOfTime 勤怠入力</h1>
   <form id="time-form">
-    <label for="start-time">出勤時間:</label>
-    <input type="time" id="start-time" required>
-    <br>
-    <label for="end-time">退勤時間:</label>
-    <input type="time" id="end-time" required>
-    <br>
-    <button type="button" id="start-button">入力開始</button>
-    <button type="button" id="find-button">find targets</button>
+    <div class="time-inputs">
+      <label for="start-time">出勤時間:
+        <input type="time" id="start-time" required>
+      </label>
+
+      <label for="end-time">退勤時間:
+        <input type="time" id="end-time" required>
+      </label>
+    </div>
+
+    <button type="button" id="find-button">対象日付を収集</button>
+    <button type="button" id="start-button">自動入力開始</button>
   </form>
-  <h2>平日のリスト</h2>
+
+  <h2>取得した日付一覧</h2>
   <ul id="target-list"></ul>
 </body>
 
