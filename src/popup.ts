@@ -3,14 +3,21 @@ const data: {
 	timestamps: Timestamp[];
 } = {
 	targets: [],
-	timestamps: [
-		{ start: "08:00", end: "17:00" },
-		//
-	],
+	timestamps: [{ start: "09:00", end: "18:00" }],
 };
 
-document.getElementById("find-button")?.addEventListener("click", () => {
-	console.log("find-button clicked");
+const ui = {
+	startTime: document.querySelector<HTMLInputElement>(".start-time")!,
+	endTime: document.querySelector<HTMLInputElement>(".end-time")!,
+	findButton: document.getElementById("find-button")!,
+	startButton: document.getElementById("start-button")!,
+	dateList: document.getElementById("date-list")!,
+};
+
+ui.startTime.value = data.timestamps[0].start;
+ui.endTime.value = data.timestamps[0].end;
+
+ui.findButton.addEventListener("click", () => {
 	send("find", (targets: ButtonTarget[]) => {
 		if (targets.length === 0) {
 			alert("ターゲットが見つかりませんでした。");
@@ -19,26 +26,34 @@ document.getElementById("find-button")?.addEventListener("click", () => {
 
 		data.targets = targets;
 
-		const targetsList = document.getElementById("target-list");
-		if (targetsList) {
-			targetsList.innerHTML = "";
+		if (ui.dateList) {
+			ui.dateList.innerHTML = "";
 
-			for (const { date } of targets) {
+			for (const { date, buttonId } of targets) {
 				const listItem = document.createElement("li");
 				listItem.textContent = date;
-				targetsList.appendChild(listItem);
+				listItem.dataset.buttonId = buttonId
+				ui.dateList.appendChild(listItem);
 			}
 		}
 	});
 });
 
-document.getElementById("start-button")?.addEventListener("click", () => {
-	console.log("start-button clicked");
-
+ui.startButton.addEventListener("click", () => {
 	if (data.targets.length === 0) {
 		alert("登録可能な日付がありません。");
 		return;
 	}
+
+	const startInput = document.querySelector<HTMLInputElement>(".start-time")!;
+	const endInput = document.querySelector<HTMLInputElement>(".end-time")!;
+
+	if (!startInput.value || !endInput.value) {
+		alert("開始時刻と終了時刻を入力してください。");
+		return;
+	}
+
+	data.timestamps = [{ start: startInput.value, end: endInput.value }];
 
 	execute(data.targets, data.timestamps);
 });
@@ -69,8 +84,6 @@ const getTabId = (): Promise<number> => {
 };
 
 const execute = async (targets: ButtonTarget[], timestamps: Timestamp[]) => {
-	console.log(targets);
-
 	const tabId = await getTabId();
 
 	for (const { buttonId } of targets) {
@@ -96,6 +109,7 @@ const execute = async (targets: ButtonTarget[], timestamps: Timestamp[]) => {
 		} while (!isRegisterReady);
 
 		await chrome.tabs.sendMessage(tabId, { action: "register", timestamps });
+		ui.dateList.querySelector(`[data-button-id="${buttonId}"]`)?.remove();
 	}
 };
 
