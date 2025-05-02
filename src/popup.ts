@@ -11,11 +11,9 @@ const ui = {
 	endTime: document.querySelector<HTMLInputElement>(".end-time")!,
 	findButton: document.getElementById("find-button")!,
 	startButton: document.getElementById("start-button")!,
+	dryRunCheckbox: document.querySelector<HTMLInputElement>("#dry-run")!,
 	dateList: document.getElementById("date-list")!,
 };
-
-ui.startTime.value = data.timestamps[0].start;
-ui.endTime.value = data.timestamps[0].end;
 
 ui.findButton.addEventListener("click", () => {
 	send("find", (targets: ButtonTarget[]) => {
@@ -32,9 +30,11 @@ ui.findButton.addEventListener("click", () => {
 			for (const { date, buttonId } of targets) {
 				const listItem = document.createElement("li");
 				listItem.textContent = date;
-				listItem.dataset.buttonId = buttonId
+				listItem.dataset.buttonId = buttonId;
 				ui.dateList.appendChild(listItem);
 			}
+
+			ui.startButton.removeAttribute("disabled");
 		}
 	});
 });
@@ -83,8 +83,24 @@ const getTabId = (): Promise<number> => {
 	});
 };
 
+const getTab = (): Promise<chrome.tabs.Tab> => {
+	return new Promise((resolve, reject) => {
+		chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+			if (tabs.length > 0) {
+				resolve(tabs[0]);
+			} else {
+				reject("No active tab found");
+			}
+		});
+	});
+};
+
 const execute = async (targets: ButtonTarget[], timestamps: Timestamp[]) => {
 	const tabId = await getTabId();
+	ui.startButton.setAttribute("disabled", "true");
+	ui.startButton.textContent = "登録中...";
+
+	const isDryRun = ui.dryRunCheckbox.checked;
 
 	for (const { buttonId } of targets) {
 		await loadComplete(tabId);
@@ -108,9 +124,11 @@ const execute = async (targets: ButtonTarget[], timestamps: Timestamp[]) => {
 			}
 		} while (!isRegisterReady);
 
-		await chrome.tabs.sendMessage(tabId, { action: "register", timestamps });
+		await chrome.tabs.sendMessage(tabId, { action: "register", timestamps, isDryRun });
 		ui.dateList.querySelector(`[data-button-id="${buttonId}"]`)?.remove();
 	}
+
+	ui.startButton.textContent = "自動入力開始";
 };
 
 const loadComplete = async (tabId: number) => {
@@ -122,3 +140,21 @@ const loadComplete = async (tabId: number) => {
 		await new Promise((resolve) => setTimeout(resolve, 300));
 	} while (tab.status === "loading");
 };
+
+const initialize = async () => {
+	const tab = await getTab();
+	const url = tab.url ?? "";
+	console.log("initialize", url);
+	if (
+		!url.match(/https:\/\/.*\.kingoftime\.jp\/admin\//) &&
+		!url.match(/https:\/\/kintaiplus\.freee\.co\.jp\/admin\//)
+	) {
+		alert("この拡張機能は、KING OF TIME または freee 勤怠プラスの管理画面でのみ動作します。");
+	} else {
+		ui.startTime.value = data.timestamps[0].start;
+		ui.endTime.value = data.timestamps[0].end;
+		ui.findButton.removeAttribute("disabled");
+	}
+};
+
+initialize();

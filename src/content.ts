@@ -36,6 +36,12 @@ const findTargets = () => {
 		}
 
 		const tr = cell.closest("tr")!;
+
+		const workTimeTd = tr.querySelector<HTMLTableCellElement>("td.all_work_time")!; // 労働合計列
+		if (workTimeTd?.innerText.trim()) {
+			continue; // すでに入力済み（有給等）
+		}
+
 		const startTd = tr.querySelector<HTMLTableCellElement>(
 			"td.start_end_timerecord[data-ht-sort-index='START_TIMERECORD']",
 		); // 出勤列
@@ -82,10 +88,13 @@ const isRegisterReady = async () => {
 	} while (true);
 };
 
-const register = ({ timestamps }: { timestamps: Timestamp[] }) => {
+const register = ({ timestamps, isDryRun }: { timestamps: Timestamp[]; isDryRun: boolean }) => {
 	setValue(timestamps);
-	// submit();
-	back();
+	if (isDryRun) {
+		back();
+	} else {
+		submit();
+	}
 };
 
 const type = { 出勤: "1", 退勤: "2" } as const;
