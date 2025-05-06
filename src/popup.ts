@@ -141,6 +141,32 @@ const loadComplete = async (tabId: number) => {
 	} while (tab.status === "loading");
 };
 
+const loadTimestampsFromStorage = async () => {
+	return new Promise<Timestamp[]>((resolve) => {
+		chrome.storage.local.get("timestamps", (result) => {
+			if (result.timestamps) {
+				resolve(result.timestamps);
+			} else {
+				resolve([{ start: "09:00", end: "18:00" }]);
+			}
+		});
+	});
+};
+
+const saveTimestampsToStorage = (timestamps: Timestamp[]) => {
+	chrome.storage.local.set({ timestamps });
+};
+
+ui.startTime.addEventListener("input", () => {
+	data.timestamps[0].start = ui.startTime.value;
+	saveTimestampsToStorage(data.timestamps);
+});
+
+ui.endTime.addEventListener("input", () => {
+	data.timestamps[0].end = ui.endTime.value;
+	saveTimestampsToStorage(data.timestamps);
+});
+
 const initialize = async () => {
 	const tab = await getTab();
 	const url = tab.url ?? "";
@@ -151,6 +177,7 @@ const initialize = async () => {
 	) {
 		alert("この拡張機能は、KING OF TIME または freee 勤怠プラスの管理画面でのみ動作します。");
 	} else {
+		data.timestamps = await loadTimestampsFromStorage();
 		ui.startTime.value = data.timestamps[0].start;
 		ui.endTime.value = data.timestamps[0].end;
 		ui.findButton.removeAttribute("disabled");
