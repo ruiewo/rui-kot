@@ -1,6 +1,6 @@
 {
 	"manifest_version": 3,
-	"name": "KingOfTime 勤怠自動入力",
+	"name": "Rui 勤怠自動入力",
 	"version": "1.0.0",
 	"description": "KingOfTimeの勤怠管理ページで自動的に入力を行うChrome拡張機能",
 	"permissions": ["storage", "activeTab"],
