@@ -24,6 +24,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	return true;
 });
 
+const applicationMark = "[申]"; // クラス名が変わった場合に備えた表示テキストでの判定用
+
+const isApplying = (tr: HTMLTableRowElement) => {
+	const scheduleTd = tr.querySelector<HTMLTableCellElement>(
+		"td.schedule, td[data-ht-sort-index='SCHEDULE']",
+	); // スケジュール列
+	if (!scheduleTd) {
+		console.warn("スケジュール列が見つからないため、申請中の判定をスキップします。", tr);
+		return false;
+	}
+
+	return (
+		!!scheduleTd.querySelector(".specific-requested") ||
+		scheduleTd.innerText.includes(applicationMark)
+	);
+};
+
 const findTargets = () => {
 	console.log("findTargets called");
 	const targets: ButtonTarget[] = [];
@@ -36,6 +53,10 @@ const findTargets = () => {
 		}
 
 		const tr = cell.closest("tr")!;
+
+		if (isApplying(tr)) {
+			continue; // 申請中のため打刻編集の対象外
+		}
 
 		const workTimeTd = tr.querySelector<HTMLTableCellElement>("td.all_work_time")!; // 労働合計列
 		if (workTimeTd?.innerText.trim()) {

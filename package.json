@@ -6,7 +6,10 @@
 		"typescript": "^5.8.3"
 	},
 	"scripts": {
-		"build": "npx tsc && node copy-assets.js",
+		"clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+		"build": "npm run clean && npx tsc && node copy-assets.js",
+		"zip": "rm -f dist.zip && cd dist && zip -r -X ../dist.zip . -x '*.DS_Store'",
+		"release": "npm run build && npm run zip",
 		"lint": "npx @biomejs/biome lint --write .",
 		"format": "npx @biomejs/biome format --write ."
 	},

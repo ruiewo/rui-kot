@@ -27,17 +27,47 @@ ui.findButton.addEventListener("click", () => {
 		if (ui.dateList) {
 			ui.dateList.innerHTML = "";
 
-			for (const { date, buttonId } of targets) {
-				const listItem = document.createElement("li");
-				listItem.textContent = date;
-				listItem.dataset.buttonId = buttonId;
-				ui.dateList.appendChild(listItem);
+			for (const target of targets) {
+				ui.dateList.appendChild(createDateListItem(target));
 			}
 
 			ui.startButton.removeAttribute("disabled");
 		}
 	});
 });
+
+const createDateListItem = ({ date, buttonId }: ButtonTarget) => {
+	const listItem = document.createElement("li");
+	listItem.dataset.buttonId = buttonId;
+
+	const label = document.createElement("span");
+	label.textContent = date;
+
+	const removeButton = document.createElement("button");
+	removeButton.type = "button";
+	removeButton.className = "remove-button";
+	removeButton.textContent = "×";
+	removeButton.addEventListener("click", () => removeTarget(buttonId));
+
+	listItem.append(label, removeButton);
+	return listItem;
+};
+
+const removeTarget = (buttonId: string) => {
+	data.targets = data.targets.filter((target) => target.buttonId !== buttonId);
+	ui.dateList.querySelector(`[data-button-id="${buttonId}"]`)?.remove();
+
+	if (data.targets.length === 0) {
+		ui.startButton.setAttribute("disabled", "true");
+	}
+};
+
+// 実行中に対象を消しても止められないため、削除ボタンを無効化する
+const setRemoveButtonsDisabled = (disabled: boolean) => {
+	for (const button of ui.dateList.querySelectorAll<HTMLButtonElement>(".remove-button")) {
+		button.disabled = disabled;
+	}
+};
 
 ui.startButton.addEventListener("click", () => {
 	if (data.targets.length === 0) {
@@ -99,6 +129,7 @@ const execute = async (targets: ButtonTarget[], timestamps: Timestamp[]) => {
 	const tabId = await getTabId();
 	ui.startButton.setAttribute("disabled", "true");
 	ui.startButton.textContent = "登録中...";
+	setRemoveButtonsDisabled(true);
 
 	const isDryRun = ui.dryRunCheckbox.checked;
 
@@ -129,6 +160,7 @@ const execute = async (targets: ButtonTarget[], timestamps: Timestamp[]) => {
 	}
 
 	ui.startButton.textContent = "自動入力開始";
+	setRemoveButtonsDisabled(false);
 };
 
 const loadComplete = async (tabId: number) => {
