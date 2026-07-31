@@ -1,7 +1,7 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	switch (message.action) {
 		case "find":
 			sendResponse(findTargets());
@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 			move(message);
 			break;
 		case "isRegisterReady":
-			sendResponse(await isRegisterReady());
+			isRegisterReady().then(sendResponse);
 			break;
 		case "register":
 			sendResponse();
